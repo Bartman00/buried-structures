@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "buried-structures"
+version = "0.1.0"
+description = "Analysis of buried structures"
+readme = "README.md"
+requires-python = ">=3.8"
+authors = [
+    {name = "Brett Mattas"}
+]
+dependencies = [
+    "numpy",
+    "pandas",
+    "plotly",
+    "nbformat>=4.2.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["buried_structures*"]
