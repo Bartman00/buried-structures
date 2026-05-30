@@ -1,0 +1,1 @@
+find notebooks/ -name "*.ipynb" | xargs ls -lh | sort -k5 -h
