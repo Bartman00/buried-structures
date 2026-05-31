@@ -11,6 +11,7 @@ if [ -f "$ENV_PATH" ]; then
     source "$ENV_PATH"
 
     echo "✅ found .env"
+    
 else
     echo "❌ Error: .env file not found!"
     exit 1
