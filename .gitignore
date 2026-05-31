@@ -97,3 +97,6 @@ logs/
 *.key
 secrets.yaml
 secrets.json
+
+# Windows Zone.Identifier files (WSL Artifact)
+*.Identifier

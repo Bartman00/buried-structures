@@ -19,15 +19,9 @@ find $NOTEBOOKS_DIR -name "*.ipynb" -not -path "*/.ipynb_checkpoints/*" | while 
 done
 
 echo "=== Updating README ==="
-python scripts/update_readme.py \
-    --user $GITHUB_USER \
-    --repo $GITHUB_REPO \
-    --branch $BRANCH \
-    --notebooks-dir $NOTEBOOKS_DIR
+python scripts/update_readme.py 
 
 echo "=== Pushing to GitHub ==="
-git add .
-git commit -m "$COMMIT_MSG"
-git push origin $BRANCH
+./scripts/update_code.sh
 
 echo "=== Done ==="
