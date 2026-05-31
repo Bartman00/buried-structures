@@ -56,9 +56,9 @@ COMMIT_MSG=${1:-"Update notebooks and README"}
 
 
 
-echo "✅ FINISHED PUBLISHING NOTEBOOKS!!!"
-./scripts/update_code.sh "$COMMIT_MSG"
 
+./scripts/update_code.sh "$COMMIT_MSG"
+echo "✅ FINISHED PUBLISHING NOTEBOOKS!!!"
 # set -e
 
 # # Usage: bash scripts/publish_notebooks.sh "your commit message"
