@@ -1,7 +1,8 @@
 # Rectangular load
 from __future__ import annotations
 
-from buried_structures import Load, Point_3d
+from buried_structures.load import Load
+from buried_structures.point import Point_3d
 from math import pi, radians, atan2
 from typing import cast
 
@@ -137,3 +138,6 @@ than calling stress 3 times because it can recycle many of the common terms.
 
     def displacement_z(self, point: Point_3d):
         return -point.z()
+        
+if __name__ == "__main__":
+    print("Inside rectangular_load.py")
