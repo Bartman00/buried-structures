@@ -181,17 +181,18 @@ than calling stress 3 times because it can recycle many of the common terms.
     def rectangular_superposition(
         self,
         point: Point_3d,
-        f: Callable[[Point_3d], float],
+        corner_function: str,
+        direction: str,
     ) -> float:
         # Returns a generalized stress or displacement for an arbritrary
         # point. Takes which stress
 
         if self.within(point):
             # Point is within the bounding rectangle
-            return 1.0
+            return self.interior_superposition(point, corner_function, direction)
 
         # Point is not under the bounding rectangle
-        return 0.0
+        return self.exterior_superposition(point, corner_function, direction)
 
     def interior_superposition(
         self, point: Point_3d, corner_function: str, direction: str
