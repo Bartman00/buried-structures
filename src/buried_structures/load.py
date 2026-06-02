@@ -84,16 +84,16 @@ class Load:
 
         return self._displacement_dispatch[direction](point)
 
-    def reference(self):
+    def reference(self) -> str:
         return "No reference, made up load"
 
-    def description(self):
+    def description(self) -> str:
         return """
     Parent load that just has hard coded loads and
     displacements.
     """
 
-    def markdown(self):
+    def markdown(self) -> str:
         return """
     # Parent Load
 

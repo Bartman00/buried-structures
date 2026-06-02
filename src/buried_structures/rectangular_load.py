@@ -1,4 +1,6 @@
 # Rectangular load
+# Always aligned so that length is in the x direction, and
+# width is in the y direction.
 from __future__ import annotations
 
 from collections.abc import Callable
@@ -177,6 +179,15 @@ than calling stress 3 times because it can recycle many of the common terms.
             return False
 
         return True
+        
+    def under_corner(self, p:Point_3d) -> bool:
+        # Return true if a point is under a corner
+
+        for corner in self.corner_points:
+            if corner.dr(p) <= corner.EPS:
+                return True
+
+        return False
 
     def rectangular_superposition(
         self,
