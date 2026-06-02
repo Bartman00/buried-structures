@@ -16,14 +16,23 @@ class Rectangular_Load(Load):
         self, center: Point_3d, magnitude: float, length: float, width: float
     ) -> None:
 
+        if length < 0:
+            raise ValueError("Rectangular Load cannot have a negative length")
+        if width < 0:
+            raise ValueError("Rectangular Load cannot have a negative width")
+
         super().__init__(center, magnitude)
         self.length = length
         self.width = width
         self.center = center
-        self.xrange = (center.x() - length/2,
-                  center.x() + length/2)
-        self.yrange = (center.y() - width/2,
-                  center.y() + width/2)
+        self.xrange = (center.x() - length / 2, center.x() + length / 2)
+        self.yrange = (center.y() - width / 2, center.y() + width / 2)
+        self.corner_points = [
+            Point_3d(self.xrange[0], self.yrange[0]),
+            Point_3d(self.xrange[0], self.yrange[1]),
+            Point_3d(self.xrange[1], self.yrange[0]),
+            Point_3d(self.xrange[1], self.yrange[1]),
+        ]
 
     def __eq__(self, other: object) -> bool:
 
@@ -76,7 +85,7 @@ than calling stress 3 times because it can recycle many of the common terms.
     """
 
     # Unique stress functions
-    def stress_x(self, point: Point_3d):
+    def stress_x(self, point: Point_3d) -> float:
         return point.x()
 
     def stress_y(self, point: Point_3d):
@@ -106,6 +115,12 @@ than calling stress 3 times because it can recycle many of the common terms.
             raise ValueError(
                 f"{direction} not allowed in rectangular_load.stress_corner."
             )
+
+        if self.length == 0 or self.width == 0 or self.magnitude == 0:
+            # The length & width early exits are helpful for
+            # superposition where some sub-rectangles might
+            # have 0 length or width
+            return 0.0
 
         # R values
         R1 = (self.length**2 + z**2) ** 0.5
@@ -152,7 +167,7 @@ than calling stress 3 times because it can recycle many of the common terms.
 
     def displacement_z(self, point: Point_3d):
         return -point.z()
-    
+
     def within(self, p: Point_3d) -> bool:
         # Return if a point is within the x-y bounds
         if not (self.xrange[0] <= p.x() <= self.xrange[1]):
@@ -166,10 +181,100 @@ than calling stress 3 times because it can recycle many of the common terms.
     def rectangular_superposition(
         self,
         point: Point_3d,
-        f: Callable[[float, str], float | tuple[float, float, float]],
+        f: Callable[[Point_3d], float],
+    ) -> float:
+        # Returns a generalized stress or displacement for an arbritrary
+        # point. Takes which stress
+
+        if self.within(point):
+            # Point is within the bounding rectangle
+            return 1.0
+
+        # Point is not under the bounding rectangle
+        return 0.0
+
+    def interior_superposition(
+        self, point: Point_3d, corner_function: str, direction: str
+    ) -> float:
+        # Uses rectangular superposition
+
+        if not self.within(point):
+            raise ValueError(f"""rectangular_point.interior superposition 
+                             was passed a point outside of it.
+                             {point=} is outside of the corners.
+                             """)
+
+        ret = 0
+        for corner in self.corner_points:
+            center_point = corner.midpoint(point)
+            length = center_point.dx(point, absolute=True)
+            width = center_point.dy(point, absolute=True)
+            sub_rectangle = Rectangular_Load(
+                center_point, self.magnitude, length, width
+            )
+
+            ret += getattr(sub_rectangle, corner_function)(point.z(), direction)
+        return ret
+
+    def exterior_superposition(
+        self, point: Point_3d, corner_function: str, direction: str
     ) -> float:
 
-        return 0.0
+        if self.within(point):
+            raise ValueError(f"""Rectangular_Load.exterior_superposition
+                             was passed a point inside of the load.
+                             {point=} is inside the corners.
+                             """)
+
+        stresses = []
+        for corner in self.corner_points:
+            center_point = corner.midpoint(point)
+            length = center_point.dx(point, absolute=True)
+            width = center_point.dy(point, absolute=True)
+            sub_rectangle = Rectangular_Load(
+                center_point, self.magnitude, length, width
+            )
+
+            stresses.append(
+                getattr(sub_rectangle, corner_function)(point.z(), direction)
+            )
+
+        within_x = self.xrange[0] <= point.x() <= self.xrange[1]
+        within_y = self.yrange[0] <= point.y() <= self.yrange[1]
+        is_within = within_x or within_y
+
+        if not is_within:
+            # Closest point - Middle 2 + Furthest
+            distances = [corner.distance(point) for corner in self.corner_points]
+            sorted_stress = [val for _, val in sorted(zip(distances, stresses))]
+            return sorted_stress[0] - sorted_stress[1] - sorted_stress[2] + sorted_stress[3]
+
+        else:
+            if within_x:
+                # Point is within the xrange of the load, not inside it.
+                if point.y() > self.center.y():
+                    # Point is above (point.y > center.y)
+                    # Add bottom 2, subtract top 2 sub-rectangle affects
+                    flippers = [1, -1, -1, 1]
+                else:
+                    # Point is below
+                    # Add top 2, subtract bottom 2 sub-rectangle affects
+                    flippers = [-1, 1, 1, -1]
+            else:
+                if point.x() > self.center.x():
+                    # Point is to right (point.x > center.x)
+                    # Add left 2 points, subtract right 2
+                    flippers = [1, 1, -1, -1]
+                else:
+                    # Point is to the left
+                    # Add right 2 points, subtract left 2
+                    flippers = [-1, -1, 1, 1]
+
+            ret = 0
+            for i, flip in enumerate(flippers):
+                ret += flip * stresses[i]
+
+            return ret
 
 
 if __name__ == "__main__":

@@ -110,6 +110,14 @@ class Point_3d:
             + (self.coordinates[1] - other.coordinates[1]) ** 2
         )
 
+    def midpoint(self, other: Point_3d) -> Point_3d:
+        # Return the midpoint between this and another point
+
+        return Point_3d(((self.coordinates[0]+ other.coordinates[0])/2,
+                         (self.coordinates[1] + other.coordinates[1])/2,
+                         (self.coordinates[2] + other.coordinates[2])/2,
+                         ))
+
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Point_3d):
             return NotImplemented
