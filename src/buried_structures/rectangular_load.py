@@ -219,6 +219,7 @@ than calling stress 3 times because it can recycle many of the common terms.
     def exterior_superposition(
         self, point: Point_3d, corner_function: str, direction: str
     ) -> float:
+        # Superposition function for a point not under the load
 
         if self.within(point):
             raise ValueError(f"""Rectangular_Load.exterior_superposition
@@ -226,7 +227,7 @@ than calling stress 3 times because it can recycle many of the common terms.
                              {point=} is inside the corners.
                              """)
 
-        stresses = []
+        sub_results = []
         for corner in self.corner_points:
             center_point = corner.midpoint(point)
             length = center_point.dx(point, absolute=True)
@@ -235,7 +236,7 @@ than calling stress 3 times because it can recycle many of the common terms.
                 center_point, self.magnitude, length, width
             )
 
-            stresses.append(
+            sub_results.append(
                 getattr(sub_rectangle, corner_function)(point.z(), direction)
             )
 
@@ -246,7 +247,7 @@ than calling stress 3 times because it can recycle many of the common terms.
         if not is_within:
             # Closest point - Middle 2 + Furthest
             distances = [corner.distance(point) for corner in self.corner_points]
-            sorted_stress = [val for _, val in sorted(zip(distances, stresses))]
+            sorted_stress = [val for _, val in sorted(zip(distances, sub_results))]
             return sorted_stress[0] - sorted_stress[1] - sorted_stress[2] + sorted_stress[3]
 
         else:
@@ -272,7 +273,7 @@ than calling stress 3 times because it can recycle many of the common terms.
 
             ret = 0
             for i, flip in enumerate(flippers):
-                ret += flip * stresses[i]
+                ret += flip * sub_results[i]
 
             return ret
 
