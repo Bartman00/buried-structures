@@ -1,10 +1,12 @@
 # Rectangular load
 from __future__ import annotations
 
+from collections.abc import Callable
+from math import atan2, pi
+from typing import cast
+
 from buried_structures.load import Load
 from buried_structures.point import Point_3d
-from math import pi, radians, atan2
-from typing import cast
 
 
 class Rectangular_Load(Load):
@@ -17,6 +19,11 @@ class Rectangular_Load(Load):
         super().__init__(center, magnitude)
         self.length = length
         self.width = width
+        self.center = center
+        self.xrange = (center.x() - length/2,
+                  center.x() + length/2)
+        self.yrange = (center.y() - width/2,
+                  center.y() + width/2)
 
     def __eq__(self, other: object) -> bool:
 
@@ -39,8 +46,8 @@ class Rectangular_Load(Load):
     Length: {self.length}\n
     Width: {self.width}
     """
-    
-    def stress_xyz(self, point: Point_3d): 
+
+    def stress_xyz(self, point: Point_3d):
         return False
 
     def reference(self):
@@ -77,44 +84,52 @@ than calling stress 3 times because it can recycle many of the common terms.
 
     def stress_z(self, point: Point_3d):
         return point.z()
-        
-    def stress_corner(self, z: float, direction: str) -> float | tuple[float, float, float]:
+
+    def stress_corner(
+        self, z: float, direction: str
+    ) -> float | tuple[float, float, float]:
         # Returns the stress under a corner.
         # TODO: Verify using atan2 gives the same result to avoid
         # using a hard-coded minimum z value
 
-        
-        allowable_directions = ["x", "y", "z", "shear_xz", 
-                                "shear_yz", "shear_xy", "all_normal",
-                                "all_shear"]
+        allowable_directions = [
+            "x",
+            "y",
+            "z",
+            "shear_xz",
+            "shear_yz",
+            "shear_xy",
+            "all_normal",
+            "all_shear",
+        ]
         if direction not in allowable_directions:
-            raise ValueError(f"{direction} not allowed in rectangular_load.stress_corner.")
-            
+            raise ValueError(
+                f"{direction} not allowed in rectangular_load.stress_corner."
+            )
+
         # R values
-        R1 = (self.length**2 + z**2)**0.5
+        R1 = (self.length**2 + z**2) ** 0.5
         R2 = (self.width**2 + z**2) ** 0.5
         R3 = (self.length**2 + self.width**2 + z**2) ** 0.5
 
         # Front stress term
         p = self.magnitude / (2 * pi)
         l, b = self.length, self.width
-        
-        atan_term = (atan2(l * b, z*R3) if 
-                     direction in ["x", "y", "z"] else None)
 
+        atan_term = atan2(l * b, z * R3) if direction in ["x", "y", "z"] else None
 
         if direction == "z":
-            return p * (atan_term + l*b/R3 * (1/R1**2 + 1/R2**2))
+            return p * (atan_term + l * b / R3 * (1 / R1**2 + 1 / R2**2))
         elif direction == "x":
-            return p * (atan_term - l*b*z/(R1**2 * R3))
+            return p * (atan_term - l * b * z / (R1**2 * R3))
         elif direction == "y":
-            return p * (atan_term - l*b*z/(R2**2 * R3))
+            return p * (atan_term - l * b * z / (R2**2 * R3))
         elif direction == "shear_xz":
-            return p * (b/R2 - z**2 * b / (R1**2 * R3))
+            return p * (b / R2 - z**2 * b / (R1**2 * R3))
         elif direction == "shear_yz":
-            return p * (l/R1 - z**2 * l / (R2**2 * R3))
+            return p * (l / R1 - z**2 * l / (R2**2 * R3))
         elif direction == "shear_xy":
-            return p * (1 + z/R3 - z*(1/R1 + 1/R2))
+            return p * (1 + z / R3 - z * (1 / R1 + 1 / R2))
         elif direction == "all_normal":
             sigma_x = cast(float, self.stress_corner(z, "x"))
             sigma_y = cast(float, self.stress_corner(z, "y"))
@@ -128,7 +143,6 @@ than calling stress 3 times because it can recycle many of the common terms.
         else:
             raise ValueError("Missing case in rectangular_load.stress_corner")
 
-
     # Uniqe displacement functions
     def displacement_x(self, point: Point_3d):
         return -point.x()
@@ -138,6 +152,25 @@ than calling stress 3 times because it can recycle many of the common terms.
 
     def displacement_z(self, point: Point_3d):
         return -point.z()
-        
+    
+    def within(self, p: Point_3d) -> bool:
+        # Return if a point is within the x-y bounds
+        if not (self.xrange[0] <= p.x() <= self.xrange[1]):
+            return False
+
+        if not (self.yrange[0] <= p.y() <= self.yrange[1]):
+            return False
+
+        return True
+
+    def rectangular_superposition(
+        self,
+        point: Point_3d,
+        f: Callable[[float, str], float | tuple[float, float, float]],
+    ) -> float:
+
+        return 0.0
+
+
 if __name__ == "__main__":
     print("Inside rectangular_load.py")

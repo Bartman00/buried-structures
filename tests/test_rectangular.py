@@ -58,4 +58,25 @@ def test_1():
     result_x = p * (a - length*width*z/(R2**2 * R3))
     assert result_x == unit_load.stress_corner(z, "y")
 
+def test_within():
 
+    p2 = Point_3d(0, 0, 0)
+    assert load.within(p2)
+
+    p3 = Point_3d(0, 0, 10)
+    assert load.within(p3)
+
+    p4 = Point_3d(5, 0, 10)
+    assert load.within(p4)
+
+    p5 = Point_3d(5, 10, 10)
+    assert load.within(p5)
+    
+def test_not_within():
+
+    p2 = Point_3d(5.00001, 0, 0)
+    assert not load.within(p2)
+    
+    
+    p3 = Point_3d(0, 10.01, 0)
+    assert not load.within(p3)
