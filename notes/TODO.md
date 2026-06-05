@@ -75,7 +75,9 @@
 - [ ] AASHTO X degree
 - [ ] CANDE modified AASHTO 30 degree
 - [ ] Overlap functions
+- [ ] Two-layer function
 
 ### Notebooks
 
 - [ ] Overlap of 2 wheel vs. 2 lane
+- [ ] Gray zone where pavement doesn't help using 2 layer.

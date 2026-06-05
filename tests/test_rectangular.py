@@ -1,62 +1,117 @@
+from math import atan2, pi
+
+from buried_structures.point import Origin, Point_3d
 from buried_structures.rectangular_load import Rectangular_Load
 import pytest
-from buried_structures.point import Point_3d, Origin
-from math import atan2, pi
 
 length, width = 10, 20
 magnitude = 2.0
 o = Origin()
 load = Rectangular_Load(o, magnitude, length, width)
 
+all_single_directions = ["x", "y", "z", "shear_xz", "shear_yz", "shear_xy"]
+
 def test_type():
     assert load.load_type == "Rectangular Load"
-    
+
+
 def test_center():
     assert load.center == o
-    
+
+
 def test_magnitude():
     assert load.magnitude == 2.0
-    
-def test_corner():
-    
-    z = 0
-    R1 = length
-    R2 = width
-    R3 = (length**2 + width**2) ** 0.5
 
+
+def test_corner_stress():
+
+    z = 0
+    # R1 = length
+    # R2 = width
+    # R3 = (length**2 + width**2) ** 0.5
 
     p = magnitude / (2 * pi)
 
-    a = (atan2(length*width, 0))
-    result = p * (a + length*width/R3 * (1/R1**2 + 1/R2**2))
+    a = atan2(length * width, 0)
+    result = p * a
 
-    assert result == load.stress_corner(z, "z")
-    
+    assert result == load.corner_stress(z, "z")
+
     result_x = p * a
-    assert result_x == load.stress_corner(z, "x")
-    assert result_x == load.stress_corner(z, "y")
+    assert result_x == load.corner_stress(z, "x")
+    assert result_x == load.corner_stress(z, "y")
+
+def test_corner_stress_0():
+    # Tests that should result in 0 corner stress
     
-def test_1():
+    no_length = Rectangular_Load(o, 1, 0, width)
+    no_width = Rectangular_Load(o, 1.0, length, 0)
+    no_magnitude = Rectangular_Load(o, 0, length, width)
+    
+    for direction in all_single_directions:
+        assert no_length.corner_stress(1.0, direction) == 0
+        assert no_width.corner_stress(1.0, direction) == 0
+        assert no_magnitude.corner_stress(1.0, direction) == 0
+        
+def test_corner_stress_2():
+
+    p_2pi = 2 * pi
+
+    unit_load = Rectangular_Load(o, p_2pi, length, width)
+    z = 10.0
+
+    p = 1.0
+    R1 = (length**2 + z**2) ** 0.5
+    R2 = (width**2 + z**2) ** 0.5
+    R3 = (length**2 + width**2 + z**2) ** 0.50
+
+    a = atan2(length * width, z * R3)
+    print(f"{z=}")
+    print(f"{p=}")
+    print(f"{R1=}")
+    print(f"{R2=}")
+    print(f"{R3=}")
+    print(f"{a=}")
+    result_z = p * (a + length * width * z / R3 * (1 / R1**2 + 1 / R2**2))
+    print(f"{result_z=}")
+    assert result_z == unit_load.corner_stress(z, "z")
+
+    result_x = p * (a - length * width * z / (R1**2 * R3))
+    assert result_x == unit_load.corner_stress(z, "x")
+
+    result_x = p * (a - length * width * z / (R2**2 * R3))
+    assert result_x == unit_load.corner_stress(z, "y")
+       
+def test_corner_raises():
+    with pytest.raises(ValueError):
+        print(load.corner_stress(1.0, "fake"))
+        
+    with pytest.raises(ValueError):
+        print(load.corner_stress(-1.0, "x"))
+    
+
+def test_corner_stress_unit():
 
     p_2pi = 2 * pi
 
     unit_load = Rectangular_Load(o, p_2pi, length, width)
     z = 1.0
-    
-    p = 1.0
-    R1 = (length**2 + z**2)**0.5
-    R2 = (width**2 + z**2)**0.5
-    R3 = (length**2 + width**2 + z**2) ** 0.50
-    
-    a = (atan2(length*width, z*R3))
-    result_z = p * (a + length*width*z/R3 * (1/R1**2 + 1/R2**2) )
-    assert result_z == unit_load.stress_corner(z, "z")
 
-    result_x = p * (a - length*width*z/(R1**2 * R3))
-    assert result_x == unit_load.stress_corner(z, "x")
-    
-    result_x = p * (a - length*width*z/(R2**2 * R3))
-    assert result_x == unit_load.stress_corner(z, "y")
+    p = 1.0
+    R1 = (length**2 + z**2) ** 0.5
+    R2 = (width**2 + z**2) ** 0.5
+    R3 = (length**2 + width**2 + z**2) ** 0.50
+
+    a = atan2(length * width, z * R3)
+    result_z = p * (a + length * width * z / R3 * (1 / R1**2 + 1 / R2**2))
+    assert result_z == unit_load.corner_stress(z, "z")
+
+    result_x = p * (a - length * width * z / (R1**2 * R3))
+    assert result_x == unit_load.corner_stress(z, "x")
+
+    result_x = p * (a - length * width * z / (R2**2 * R3))
+    assert result_x == unit_load.corner_stress(z, "y")
+
 
 def test_within():
 
@@ -71,12 +126,74 @@ def test_within():
 
     p5 = Point_3d(5, 10, 10)
     assert load.within(p5)
-    
+
+
 def test_not_within():
 
     p2 = Point_3d(5.00001, 0, 0)
     assert not load.within(p2)
-    
-    
+
     p3 = Point_3d(0, 10.01, 0)
     assert not load.within(p3)
+
+def test_under_corner():
+
+    p2 = Point_3d(0, 0,0)
+    assert not load.under_corner(p2)
+    
+    p3 = Point_3d(length/2, width/2, 0)
+    assert load.under_corner(p3)
+    
+    for corner in load.corner_points:
+        assert load.under_corner(corner)
+        
+    p4 = load.corner_points[3].shifted_point(0.001)
+    assert not load.under_corner(p4)
+
+def test_interior_center():
+
+    corner = Point_3d(length / 2, width / 2)
+    print(f"Corner = {corner}")
+    print(f"o = {o}")
+    sub_center = corner.midpoint(o)
+    sub_rectangle = Rectangular_Load(sub_center, magnitude, length / 2, width / 2)
+
+    expected = load.interior_superposition(Point_3d(0, 0), "corner_stress", "x")
+    print(f"{expected=}")
+
+    result = 4 * sub_rectangle.corner_stress(o.z(), "x")
+    print(f"{result=}")
+    assert expected == result
+    
+    print('----- Shifted test -----')
+    down_shift = 10.0
+    o_shift = o.shifted_point(dz=down_shift)
+    print(f"o_shift = {o_shift}")
+    print(f"sub_center: {sub_center}")
+    
+    print("sub_rectangle: ")
+    print(sub_rectangle)
+    
+    expected = load.interior_superposition(Point_3d(0, 0, down_shift), 
+                                           "corner_stress", "z")
+    print(f"{expected=}")
+
+    result = 4 * sub_rectangle.corner_stress(o_shift.z(), "z")
+    # print("sub_rectangle:")
+    # print(sub_rectangle)
+    print(f"{result=}")
+    assert expected == result
+
+    
+def test_interior_raises():
+    
+    p2 = Point_3d(length/2, width/2 + 0.001, 0)
+
+    with pytest.raises(ValueError):
+        print(load.interior_superposition(p2, "corner_stress", "x"))
+    
+    with pytest.raises(ValueError):
+        print(load.interior_superposition(o, "corner_stress", "fake"))
+    
+    with pytest.raises(ValueError):
+        print(load.interior_superposition(o, "fake_function", "x"))

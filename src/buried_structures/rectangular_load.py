@@ -3,7 +3,7 @@
 # width is in the y direction.
 from __future__ import annotations
 
-from collections.abc import Callable
+# from collections.abc import Callable
 from math import atan2, pi
 from typing import cast
 
@@ -96,7 +96,7 @@ than calling stress 3 times because it can recycle many of the common terms.
     def stress_z(self, point: Point_3d):
         return point.z()
 
-    def stress_corner(
+    def corner_stress(
         self, z: float, direction: str
     ) -> float | tuple[float, float, float]:
         # Returns the stress under a corner.
@@ -117,6 +117,8 @@ than calling stress 3 times because it can recycle many of the common terms.
             raise ValueError(
                 f"{direction} not allowed in rectangular_load.stress_corner."
             )
+        if z < 0:
+            raise ValueError("Rectangular load stresses only defined for positive z" )
 
         if self.length == 0 or self.width == 0 or self.magnitude == 0:
             # The length & width early exits are helpful for
@@ -136,7 +138,7 @@ than calling stress 3 times because it can recycle many of the common terms.
         atan_term = atan2(l * b, z * R3) if direction in ["x", "y", "z"] else None
 
         if direction == "z":
-            return p * (atan_term + l * b / R3 * (1 / R1**2 + 1 / R2**2))
+            return p * (atan_term + l * b * z/ R3 * (1 / R1**2 + 1 / R2**2))
         elif direction == "x":
             return p * (atan_term - l * b * z / (R1**2 * R3))
         elif direction == "y":
@@ -148,14 +150,14 @@ than calling stress 3 times because it can recycle many of the common terms.
         elif direction == "shear_xy":
             return p * (1 + z / R3 - z * (1 / R1 + 1 / R2))
         elif direction == "all_normal":
-            sigma_x = cast(float, self.stress_corner(z, "x"))
-            sigma_y = cast(float, self.stress_corner(z, "y"))
-            sigma_z = cast(float, self.stress_corner(z, "z"))
+            sigma_x = cast(float, self.corner_stress(z, "x"))
+            sigma_y = cast(float, self.corner_stress(z, "y"))
+            sigma_z = cast(float, self.corner_stress(z, "z"))
             return sigma_x, sigma_y, sigma_z
         elif direction == "all_shear":
-            tau_xz = cast(float, self.stress_corner(z, "shear_xz"))
-            tau_yz = cast(float, self.stress_corner(z, "shear_yz"))
-            tau_xy = cast(float, self.stress_corner(z, "shear_xy"))
+            tau_xz = cast(float, self.corner_stress(z, "shear_xz"))
+            tau_yz = cast(float, self.corner_stress(z, "shear_yz"))
+            tau_xy = cast(float, self.corner_stress(z, "shear_xy"))
             return tau_xz, tau_yz, tau_xy
         else:
             raise ValueError("Missing case in rectangular_load.stress_corner")
@@ -215,12 +217,14 @@ than calling stress 3 times because it can recycle many of the common terms.
                              was passed a point outside of it.
                              {point=} is outside of the corners.
                              """)
+        if not hasattr(self, corner_function):
+            raise ValueError(f"{corner_function} is not defined for rectangular_load")
 
         ret = 0
         for corner in self.corner_points:
-            center_point = corner.midpoint(point)
-            length = center_point.dx(point, absolute=True)
-            width = center_point.dy(point, absolute=True)
+            center_point = corner.midpoint(point).modified_point(z=0)
+            length = 2*center_point.dx(point, absolute=True)
+            width = 2*center_point.dy(point, absolute=True)
             sub_rectangle = Rectangular_Load(
                 center_point, self.magnitude, length, width
             )
@@ -242,8 +246,8 @@ than calling stress 3 times because it can recycle many of the common terms.
         sub_results = []
         for corner in self.corner_points:
             center_point = corner.midpoint(point)
-            length = center_point.dx(point, absolute=True)
-            width = center_point.dy(point, absolute=True)
+            length = 2*center_point.dx(point, absolute=True)
+            width = 2*center_point.dy(point, absolute=True)
             sub_rectangle = Rectangular_Load(
                 center_point, self.magnitude, length, width
             )
@@ -292,3 +296,26 @@ than calling stress 3 times because it can recycle many of the common terms.
 
 if __name__ == "__main__":
     print("Inside rectangular_load.py")
+    length, width = 10, 20
+    magnitude = 2.0
+    o = Point_3d(0, 0, 0)
+    load = Rectangular_Load(o, magnitude, length, width)
+    
+    z = 10.0
+    
+    corner_pressure = load.corner_stress(z, "z")
+    print(f"{corner_pressure=}")
+
+    
+    pressure_point = Point_3d(0, 0, z)
+    pressure = load.interior_superposition(pressure_point, "corner_stress", "z")
+    
+    print(f"load under center = {pressure}")
+    
+    sub_center = o.midpoint(Point_3d(length/2, width/2, 0))
+    sub_load = Rectangular_Load(sub_center, magnitude, length/2, width/2)
+    sub_pressure = sub_load.corner_stress(pressure_point.z(), "z")
+
+    print(f"sub-load under center = {sub_pressure}")
+    print("Finished")
+

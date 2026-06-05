@@ -113,10 +113,29 @@ class Point_3d:
     def midpoint(self, other: Point_3d) -> Point_3d:
         # Return the midpoint between this and another point
 
-        return Point_3d(((self.coordinates[0]+ other.coordinates[0])/2,
+        return Point_3d((self.coordinates[0]+ other.coordinates[0])/2,
                          (self.coordinates[1] + other.coordinates[1])/2,
                          (self.coordinates[2] + other.coordinates[2])/2,
-                         ))
+                         )
+                         
+    def shifted_point(self, dx: float=0,
+                      dy: float=0,
+                      dz: float=0) -> Point_3d:
+        return Point_3d(self.x() + dx, self.y() + dy, self.z() + dz)
+        
+    def modified_point(self,
+                       x: float|None = None,
+                       y: float|None = None,
+                       z: float|None = None) -> Point_3d:
+        # Returns a copy of point with input coordinates modified
+        new_x, new_y, new_z = self.x(), self.y(), self.z()
+        
+        new_x = new_x if x is None else x
+        new_y = new_y if y is None else y
+        new_z = new_z if z is None else z
+        
+        return Point_3d(new_x, new_y, new_z)
+        
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Point_3d):
@@ -142,5 +161,8 @@ if __name__ == "__main__":
     o = Origin()
     print(o)
     print(o.x())
+    
+    print("-------")
+    print(Point_3d(0, 0))
     
     print("Finished")
