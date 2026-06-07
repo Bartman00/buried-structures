@@ -53,19 +53,23 @@ I want to have looked implimented:
 1. Rectangular, point, and strip loads (both directions).
 2. At least one Jupyter notebook exploring all of these.
 3. Answer some questions (listed below)
-4. Impliment the AASHTO Ad-hoc method.
-5. Include multiple lanes with an input for minimum adjacent wheel spacing.
-6. Create a notebook exploring the ad-hoc method that I could send to the CANDE developer.
-7. Include a function to account for pavement thickensses.
+
+### Ignore for boot.dev:
+
+1. Impliment the AASHTO Ad-hoc method.
+2. Include multiple lanes with an input for minimum adjacent wheel spacing.
+3. Create a notebook exploring the ad-hoc method that I could send to the CANDE developer.
+4. Include a function to account for pavement thickensses.
 
 ### Questions for the Elastic methods:
 
-1. How should the singularity be addressed in the point load application?
+1. (Ignore for boot.dev) How should the singularity be addressed in the point load application?
 2. How much of a difference does the rectangular distribution even make?
-3. How much of a difference is there between the rectangular and strip methods?
-4. Could you approximate the rectangular method with a grid of point methods? The rectangular method conservatively (for most applications) assumes a poisson's ratio of 0.50 so a grid of point loads would be useful for more realistic poisson's ratios.
+3. (Ignore for boot.dev)How much of a difference is there between the rectangular and strip methods?
+4. (Ignore for boot.dev)Could you approximate the rectangular method with a grid of point methods? The rectangular method conservatively (for most applications) assumes a poisson's ratio of 0.50 so a grid of point loads would be useful for more realistic poisson's ratios.
+5. How should the radial stress be addressed for the point load?
 
-### Questions for the Ad-hoc method:
+### Questions for the Ad-hoc method (Ignore for boot.dev):
 
 1. I think there is a zone where including pavement actually reduces the transverse distribution width and results in higher stresses. Can I plot that?
 

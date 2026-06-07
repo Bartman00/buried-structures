@@ -17,6 +17,12 @@ def test_distance():
     assert origin.distance(point_a) == 1.0
     assert abs(point_a.distance(point_b) - math.sqrt(2**2 + 3**2)) < 1e-6
 
+    p2 = Point_3d(3, 4, 5)
+    assert abs(origin.distance(p2) - math.sqrt(3**2 + 4**2 + 5**2)) < 1e-6
+
+    p3 = Point_3d(3, 4, -5)
+    assert abs(origin.distance(p3) - math.sqrt(3**2 + 4**2 + 5**2)) < 1e-6
+
 def test_r():
     assert abs(point_a.dr(point_b) - 2.0) < 1e-6
     assert abs(origin.dr(point_b) - math.sqrt(1**2 + 2**2)) < 1e-6
@@ -35,6 +41,14 @@ def test_dz():
     assert abs(origin.dz(point_b) - 3.0) < 1e-6
     assert abs(point_b.dz(origin, reverse=True) - 3.0) < 1e-6
     assert abs(point_b.dz(origin, absolute=True) - 3.0) < 1e-6
+
+def test_dr():
+    p = Point_3d(3, 4, 0)
+    assert abs(origin.dr(p) - 5.0) < 1e-6
+
+    p2 = Point_3d(3, 4, 5)
+    assert abs(origin.dr(p2) - 5.0) < 1e-6
+    
     
 def test_origin_coordinates():
     assert origin_2.x() == 0
