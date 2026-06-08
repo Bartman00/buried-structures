@@ -26,7 +26,18 @@ fi
 # Copy all /images subfolders into the docs output tree
 find "$NOTEBOOKS" -type d -name "images" | while read -r img_dir; do
     relative="${img_dir#$NOTEBOOKS/}"
-    cp -r "$img_dir" "$DOCS/$relative"
+    # echo "relative: $relative"
+
+    # Take off last folder for paste or it goes into docs/sub_folder/images/images
+    paste_dir="${relative%/*}"
+    # echo "paste_dir: $paste_dir"
+    # echo "NOTEBOOKS: $NOTEBOOKS"
+    # echo "Copying from: $img_dir"
+    
+
+    # echo "Copying to: $DOCS/$paste_dir"
+
+    cp -r "$img_dir" "$DOCS/$paste_dir"
     echo "📁 Copied images: $img_dir"
 done
 
@@ -58,24 +69,6 @@ COMMIT_MSG=${1:-"Update notebooks and README"}
 
 
 ./scripts/update_code.sh "$COMMIT_MSG"
+
+
 echo "✅ FINISHED PUBLISHING NOTEBOOKS!!!"
-# set -e
-
-# # Usage: bash scripts/publish_notebooks.sh "your commit message"
-# COMMIT_MSG=${1:-"Update notebooks and README"}
-
-# echo "=== Running notebooks ==="
-# find $NOTEBOOKS_DIR -name "*.ipynb" -not -path "*/.ipynb_checkpoints/*" | while read nb; do
-#     echo "Running $nb..."
-#     jupyter nbconvert --to notebook --execute --inplace \
-#         --ExecutePreprocessor.timeout=300 "$nb"
-# done
-
-# echo "=== Updating README ==="
-# python scripts/update_readme.py 
-# echo "✅ Updated readme!"
-
-# echo "=== Pushing to GitHub ==="
-# ./scripts/update_code.sh "$COMMIT_MSG"
-
-# echo "✅ FINISHED PUBLISHING NOTEBOOKS!!!"
