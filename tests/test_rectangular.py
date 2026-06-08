@@ -197,3 +197,86 @@ def test_interior_raises():
     
     with pytest.raises(ValueError):
         print(load.interior_superposition(o, "fake_function", "x"))
+        
+def test_interior_edge():
+
+    # Put a point on an edge.
+
+    p2 = Point_3d(0, width/2, 0)
+
+    result = load.interior_superposition(p2, "corner_stress", "z")
+    
+    sub_point = Point_3d(length/4, 0, 0)
+    sub_rectangle = Rectangular_Load(sub_point, magnitude, length/2, width)
+    expected = 2 * sub_rectangle.corner_stress(0, "z")
+    
+    assert result == expected
+    
+    z_shift = 12
+    p3 = Point_3d(0, width/2, z_shift)
+
+    result = load.interior_superposition(p3, "corner_stress", "z")
+    
+    expected = 2 * sub_rectangle.corner_stress(z_shift, "z")
+    assert result == expected
+
+
+def test_interior_general():
+
+    point = Point_3d(length/4, width/4, 10)
+    print(f"point:\n{point}")
+    result_z = load.interior_superposition(point, "corner_stress", "z")
+    result_x = load.interior_superposition(point, "corner_stress", "x")
+    result_y = load.interior_superposition(point, "corner_stress", "y")
+
+    corners = load.corner_points
+    
+
+    expected_x, expected_y, expected_z = 0, 0, 0
+    for corner in corners:
+        center_point = corner.midpoint(point)
+        sub_length = corner.dx(point)
+        sub_width = corner.dy(point)
+        
+        print(f"corner:\n{corner}")
+        print(f"center_point:\n{center_point}")
+        print(f"sub_length:\n{sub_length}")
+        print(f"sub_width:\n{sub_width}")
+
+        mag_term = magnitude / (2*pi)
+        R1 = (sub_length**2 + point.z()**2) ** 0.50
+        R2 = (sub_width**2 + point.z()**2) ** 0.50
+        R3 = (sub_length**2 + sub_width**2 + point.z()**2) ** 0.50
+        atan_term = atan2(sub_length*sub_width,(point.z()*R3))
+        
+        print(f"{R1=}")
+        print(f"{R2=}")
+        print(f"{R3=}")
+        print(f"{atan_term=}")
+        print(f"{mag_term=}")
+        
+        temp_z = mag_term*(atan_term + 
+                               sub_length*sub_width*point.z()/R3*(
+                                   1/R1**2 + 1/R2**2
+                                   ))
+        print(f"{temp_z=}")
+        expected_z += temp_z
+
+        temp_x = mag_term*(atan_term - 
+                           sub_length*sub_width*point.z() / (
+                               R1**2 * R3
+                               ))
+        print(f"{temp_x=}")
+        expected_x += temp_x
+        
+        temp_y = mag_term*(atan_term - 
+                           sub_length*sub_width*point.z() / (
+                               R2**2 * R3
+                               ))
+        
+        expected_y += temp_y
+        
+    assert result_z == expected_z
+    assert result_x == expected_x
+    assert result_y == expected_y
+
