@@ -218,7 +218,7 @@ than calling stress 3 times because it can recycle many of the common terms.
                              {point=} is outside of the corners.
                              """)
         if not hasattr(self, corner_function):
-            raise ValueError(f"{corner_function} is not defined for rectangular_load")
+            raise AttributeError(f"{corner_function} is not defined for rectangular_load")
 
         ret = 0
         for corner in self.corner_points:
@@ -242,6 +242,9 @@ than calling stress 3 times because it can recycle many of the common terms.
                              was passed a point inside of the load.
                              {point=} is inside the corners.
                              """)
+
+        if not hasattr(self, corner_function):
+            raise AttributeError(f"{corner_function} is not defined for rectangular_load")
 
         sub_results = []
         for corner in self.corner_points:
@@ -272,11 +275,11 @@ than calling stress 3 times because it can recycle many of the common terms.
                 if point.y() > self.center.y():
                     # Point is above (point.y > center.y)
                     # Add bottom 2, subtract top 2 sub-rectangle affects
-                    flippers = [1, -1, -1, 1]
+                    flippers = [1, -1, 1, -1]
                 else:
                     # Point is below
                     # Add top 2, subtract bottom 2 sub-rectangle affects
-                    flippers = [-1, 1, 1, -1]
+                    flippers = [-1, 1, -1, 1]
             else:
                 if point.x() > self.center.x():
                     # Point is to right (point.x > center.x)
@@ -317,5 +320,9 @@ if __name__ == "__main__":
     sub_pressure = sub_load.corner_stress(pressure_point.z(), "z")
 
     print(f"sub-load under center = {sub_pressure}")
-    print("Finished")
+    
+    print("-------- EXTERIOR WITHIN ---------")
+    p = Point_3d(0, 20, 10)
+    print(load.exterior_superposition(p, "corner_stress", "z"))
 
+    print("Finished")

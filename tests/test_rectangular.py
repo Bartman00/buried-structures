@@ -195,7 +195,7 @@ def test_interior_raises():
     with pytest.raises(ValueError):
         print(load.interior_superposition(o, "corner_stress", "fake"))
     
-    with pytest.raises(ValueError):
+    with pytest.raises(AttributeError):
         print(load.interior_superposition(o, "fake_function", "x"))
         
 def test_interior_edge():
@@ -280,3 +280,182 @@ def test_interior_general():
     assert result_x == expected_x
     assert result_y == expected_y
 
+def test_exterior_raises():
+
+    p2 = Point_3d(length/2, width/2, 0)
+
+    with pytest.raises(ValueError):
+        print(load.exterior_superposition(p2, "corner_stress", "x"))
+
+    p3 = Point_3d(length/2 + 0.1, width/2, 0)
+    with pytest.raises(ValueError):
+        print(load.exterior_superposition(p3, "corner_stress", "fake"))
+
+    with pytest.raises(AttributeError):
+        print(load.exterior_superposition(p3, "fake_function", "x"))
+        
+def test_exterior_outside():
+
+    print("test_exterior_outside:")
+    z = 10.0
+    point = Point_3d(length, width, z)
+    print(f"point: \n{point}")
+
+    p_term = magnitude / (2 * pi)
+
+    # Furthest  corner
+    corner = Point_3d(-length/2, -width/2, z)
+    l, w = corner.dx(point, absolute=True), corner.dy(point, absolute=True)
+    R1 = (l**2 + z**2) ** 0.50
+    R2 = (w**2 + z**2) ** 0.50
+    R3 = (l**2 + w**2 + z**2) ** 0.50
+    aterm = atan2(l*w, z*R3)
+    furthest = p_term * ( aterm + l*w*z/R3 * (1/R1**2 + 1/R2**2))
+    
+
+    # Middle corners
+    corner = Point_3d(length/2, -width/2, z)
+    l, w = corner.dx(point, absolute=True), corner.dy(point, absolute=True)
+    R1 = (l**2 + z**2) ** 0.50
+    R2 = (w**2 + z**2) ** 0.50
+    R3 = (l**2 + w**2 + z**2) ** 0.50
+    aterm = atan2(l*w, z*R3)
+    
+    middle_1 = p_term * ( aterm + l*w*z/R3 * (1/R1**2 + 1/R2**2))
+    
+    corner = Point_3d(-length/2, width/2, z)
+    l, w = corner.dx(point, absolute=True), corner.dy(point, absolute=True)
+    R1 = (l**2 + z**2) ** 0.50
+    R2 = (w**2 + z**2) ** 0.50
+    R3 = (l**2 + w**2 + z**2) ** 0.50
+    aterm = atan2(l*w, z*R3)
+    
+    middle_2 = p_term * ( aterm + l*w*z/R3 * (1/R1**2 + 1/R2**2))
+    
+    # Nearest corner
+    corner = Point_3d(length/2, width/2, z)
+    l, w = corner.dx(point, absolute=True), corner.dy(point, absolute=True)
+    R1 = (l**2 + z**2) ** 0.50
+    R2 = (w**2 + z**2) ** 0.50
+    R3 = (l**2 + w**2 + z**2) ** 0.50
+    aterm = atan2(l*w, z*R3)
+    
+    nearest = p_term * ( aterm + l*w*z/R3 * (1/R1**2 + 1/R2**2))
+    
+    print(f"{nearest=}")
+    print(f"{l=}, {w=}")
+    print(f"{R1=}, {R2=}, {R3=}")
+    print(f"{aterm=}")
+    
+    result = load.exterior_superposition(point, "corner_stress", "z")
+    
+    expected = nearest - middle_1 - middle_2 + furthest
+    print(f"{middle_1=}")
+    print(f"{middle_2=}")
+    print(f"{furthest=}")
+    
+    assert expected == result
+
+def test_exterior_within():
+    # Test with symmetry
+
+    print("test_exterior_within:")
+    z = 10.0
+    point = Point_3d(0, width, z)
+    print(f"point: \n{point}")
+
+    p_term = magnitude / (2 * pi)
+    print(f"{p_term=}")
+
+    # Furthest  corner
+    corner = Point_3d(-length/2, -width/2, z)
+    l, w = corner.dx(point, absolute=True), corner.dy(point, absolute=True)
+    R1 = (l**2 + z**2) ** 0.50
+    R2 = (w**2 + z**2) ** 0.50
+    R3 = (l**2 + w**2 + z**2) ** 0.50
+    aterm = atan2(l*w, z*R3)
+    furthest = p_term * ( aterm + l*w*z/R3 * (1/R1**2 + 1/R2**2))
+    print(f"{furthest=}")
+    
+
+    # Nearest corner - Pursposely used kitty corner to test symmetry
+    corner = Point_3d(length/2, width/2, z)
+    l, w = corner.dx(point, absolute=True), corner.dy(point, absolute=True)
+    R1 = (l**2 + z**2) ** 0.50
+    R2 = (w**2 + z**2) ** 0.50
+    R3 = (l**2 + w**2 + z**2) ** 0.50
+    aterm = atan2(l*w, z*R3)
+    
+    nearest = p_term * ( aterm + l*w*z/R3 * (1/R1**2 + 1/R2**2))
+    
+    print("------NEAREST--------")
+    print(f"{l=}, {w=}")
+    print(f"{R1=}, {R2=}, {R3=}")
+    print(f"{aterm=}")
+    print(f"{nearest=}")
+    
+    result = load.exterior_superposition(point, "corner_stress", "z")
+    print(f"{result=}")
+    
+    expected = 2*furthest - 2*nearest
+    print(f"{expected=}")
+    
+    assert abs(expected - result) <= 1e-6
+    
+
+    point = Point_3d(0, -width, z)
+    result = load.exterior_superposition(point, "corner_stress", "z")
+    assert abs(expected - result) <= 1e-6
+    
+def test_exterior_within_2():
+
+
+    # Test with symmetry
+
+    print("test_exterior_within:")
+    z = 10.0
+    point = Point_3d(length*3, 0, z)
+    print(f"point: \n{point}")
+
+    p_term = magnitude / (2 * pi)
+    print(f"{p_term=}")
+
+    # Furthest  corner
+    corner = Point_3d(-length/2, -width/2, z)
+    l, w = corner.dx(point, absolute=True), corner.dy(point, absolute=True)
+    R1 = (l**2 + z**2) ** 0.50
+    R2 = (w**2 + z**2) ** 0.50
+    R3 = (l**2 + w**2 + z**2) ** 0.50
+    aterm = atan2(l*w, z*R3)
+    furthest = p_term * ( aterm + l*w*z/R3 * (1/R1**2 + 1/R2**2))
+    print(f"{furthest=}")
+    
+
+    # Nearest corner - Pursposely used kitty corner to test symmetry
+    corner = Point_3d(length/2, width/2, z)
+    l, w = corner.dx(point, absolute=True), corner.dy(point, absolute=True)
+    R1 = (l**2 + z**2) ** 0.50
+    R2 = (w**2 + z**2) ** 0.50
+    R3 = (l**2 + w**2 + z**2) ** 0.50
+    aterm = atan2(l*w, z*R3)
+    
+    nearest = p_term * ( aterm + l*w*z/R3 * (1/R1**2 + 1/R2**2))
+    
+    print("------NEAREST--------")
+    print(f"{l=}, {w=}")
+    print(f"{R1=}, {R2=}, {R3=}")
+    print(f"{aterm=}")
+    print(f"{nearest=}")
+    
+    result = load.exterior_superposition(point, "corner_stress", "z")
+    print(f"{result=}")
+    
+    expected = 2*furthest - 2*nearest
+    print(f"{expected=}")
+    
+    assert abs(expected - result) <= 1e-6
+    
+
+    point = Point_3d(-length*3, 0, z)
+    result = load.exterior_superposition(point, "corner_stress", "z")
+    assert abs(expected - result) <= 1e-6
