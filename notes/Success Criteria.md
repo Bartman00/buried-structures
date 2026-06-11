@@ -50,9 +50,16 @@ Not sure if I want to include the ad-hoc method. It is useful, but I think I'll 
 
 I want to have looked implimented:
 
-1. Rectangular, point, and strip loads (both directions).
-2. At least one Jupyter notebook exploring all of these.
-3. Answer some questions (listed below)
+1. [x] Rectangular load
+2. Point load
+3. Strip Load
+4. Adding loads together
+5. Notebook for rectangular load
+6. Notebook for point load
+7. Notebook for strip load
+8. Notebook for adding loads together
+9. Answer some questions (listed below)
+10. Make this pip-installable.
 
 ### Ignore for boot.dev:
 
@@ -63,11 +70,11 @@ I want to have looked implimented:
 
 ### Questions for the Elastic methods:
 
-1. (Ignore for boot.dev) How should the singularity be addressed in the point load application?
+1. How should the singularity be addressed in the point load application?
 2. How much of a difference does the rectangular distribution even make?
 3. (Ignore for boot.dev)How much of a difference is there between the rectangular and strip methods?
 4. (Ignore for boot.dev)Could you approximate the rectangular method with a grid of point methods? The rectangular method conservatively (for most applications) assumes a poisson's ratio of 0.50 so a grid of point loads would be useful for more realistic poisson's ratios.
-5. How should the radial stress be addressed for the point load?
+5. [x] How should the radial stress be addressed for the point load?
 
 ### Questions for the Ad-hoc method (Ignore for boot.dev):
 
@@ -79,7 +86,10 @@ I want to have looked implimented:
 2. What would the results look like? How do elastic, ad-hoc, and FEM results all look together on important questions such as those below?
 3. Could using this library become a website? Parametric 3D models with automatic analysis seems useful.
 4. How big of a role does Poisson's ratio play?
+5. Cerutti - concentrated horizontal load
+6. Stip horizontal loading
 
 ### FEM Results Questions:
+    
 1. Is plane-strain a good approximation?
 2. How good of an approximation is ad-hoc method? Should it be refined?
