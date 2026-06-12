@@ -58,8 +58,8 @@ class Rectangular_Load(Load):
     Width: {self.width}
     """
 
-    def stress_xyz(self, point: Point_3d):
-        return False
+    # def stress_xyz(self, point: Point_3d):
+    #     return False
 
     def reference(self):
         return """Elastic Solutions for Soil and Rock Mechanics, 
@@ -88,14 +88,23 @@ than calling stress 3 times because it can recycle many of the common terms.
 
     # Unique stress functions
     def stress_x(self, point: Point_3d) -> float:
-        return point.x()
+        return self.rectangular_superposition(point, "corner_stress", "x")
 
-    def stress_y(self, point: Point_3d):
-        return point.y()
+    def stress_y(self, point: Point_3d) -> float:
+        return self.rectangular_superposition(point, "corner_stress", "y")
 
-    def stress_z(self, point: Point_3d):
-        return point.z()
+    def stress_z(self, point: Point_3d) -> float:
+        return self.rectangular_superposition(point, "corner_stress", "z")
+    
+    def shear_xz(self, point: Point_3d) -> float:
+        return self.rectangular_superposition(point, "corner_stress", "shear_xz")
 
+    def shear_yz(self, point: Point_3d) -> float:
+        return self.rectangular_superposition(point, "corner_stress", "shear_yz")
+    
+    def shear_xy(self, point: Point_3d) -> float:
+        return self.rectangular_superposition(point, "corner_stress", "shear_xy")
+    
     def corner_stress(
         self, z: float, direction: str
     ) -> float | tuple[float, float, float]:
@@ -163,14 +172,14 @@ than calling stress 3 times because it can recycle many of the common terms.
             raise ValueError("Missing case in rectangular_load.stress_corner")
 
     # Uniqe displacement functions
-    def displacement_x(self, point: Point_3d):
-        return -point.x()
+    def displacement_x(self, point: Point_3d) -> float:
+        raise NotImplementedError ("Not defined in Poulos & Davis")
 
-    def displacement_y(self, point: Point_3d):
-        return -point.y()
+    def displacement_y(self, point: Point_3d) -> float:
+        raise NotImplementedError ("Not defined in Poulos & Davis")
 
-    def displacement_z(self, point: Point_3d):
-        return -point.z()
+    def displacement_z(self, point: Point_3d) -> float:
+        raise NotImplementedError ("Not defined in Poulos & Davis")
 
     def within(self, p: Point_3d) -> bool:
         # Return if a point is within the x-y bounds
@@ -324,5 +333,10 @@ if __name__ == "__main__":
     print("-------- EXTERIOR WITHIN ---------")
     p = Point_3d(0, 20, 10)
     print(load.exterior_superposition(p, "corner_stress", "z"))
+
+    
+    print("-------stress_xyz--------------")
+    x = load.stress_xyz(p)
+    print(x)
 
     print("Finished")

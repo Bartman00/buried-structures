@@ -44,7 +44,7 @@ class Load:
             "z": self.stress_z,
         }
 
-    def stress(self, point: Point_3d, direction="z"):
+    def stress(self, point: Point_3d, direction="z") -> float:
         """
         Stress dispatcher. It sends the direction to
         the appropriate stress function.
@@ -72,7 +72,7 @@ class Load:
             "z": self.displacement_z,
         }
 
-    def displacement(self, point: Point_3d, direction="z"):
+    def displacement(self, point: Point_3d, direction="z") -> float:
         """
         Displacement dispatcher. It sends the direction to
         the appropriate displacement function.
@@ -101,21 +101,21 @@ class Load:
     """
 
     # Unique stress functions
-    def stress_x(self, point: Point_3d):
+    def stress_x(self, point: Point_3d) -> float:
         return point.x()
 
-    def stress_y(self, point: Point_3d):
+    def stress_y(self, point: Point_3d) -> float:
         return point.y()
 
-    def stress_z(self, point: Point_3d):
+    def stress_z(self, point: Point_3d) -> float:
         return point.z()
 
     # Uniqe displacement functions
-    def displacement_x(self, point: Point_3d):
+    def displacement_x(self, point: Point_3d) -> float:
         return -point.x()
 
-    def displacement_y(self, point: Point_3d):
+    def displacement_y(self, point: Point_3d) -> float:
         return -point.y()
 
-    def displacement_z(self, point: Point_3d):
+    def displacement_z(self, point: Point_3d) -> float:
         return -point.z()

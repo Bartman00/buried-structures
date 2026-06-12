@@ -459,3 +459,34 @@ def test_exterior_within_2():
     point = Point_3d(-length*3, 0, z)
     result = load.exterior_superposition(point, "corner_stress", "z")
     assert abs(expected - result) <= 1e-6
+    
+def test_stress_x():
+
+    point = Point_3d(5*length, 5*width, 13.0)
+    result = load.stress_x(point)
+    expected = load.rectangular_superposition(point, "corner_stress", "x")
+    
+    assert result == expected
+    
+    result = load.stress_y(point)
+    expected = load.rectangular_superposition(point, "corner_stress", "y")
+    assert result == expected
+    
+    result = load.stress_z(point)
+    expected = load.rectangular_superposition(point, "corner_stress", "z")
+    assert result == expected
+    
+def test_stress_xyz():
+
+    point = Point_3d(2*width + 2*length, 23)
+    x, y, z = load.stress_xyz(point)
+    print(x)
+    
+    expected_x = load.stress_x(point)
+    assert x == expected_x
+
+    expected_y = load.stress_y(point)
+    assert y == expected_y
+    
+    expected_z = load.stress_z(point)
+    assert z == expected_z
