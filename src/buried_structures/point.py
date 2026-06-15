@@ -109,6 +109,13 @@ class Point_3d:
             (self.coordinates[0] - other.coordinates[0]) ** 2
             + (self.coordinates[1] - other.coordinates[1]) ** 2
         )
+        
+    def theta(self, other: Point_3d) -> float:
+        # Return cylindrical angle starting from this point
+        if self.dr(other) < self.EPS:
+            raise ValueError("Point.theta points can have the same x & y values")
+
+        return math.atan2(self.dy(other), self.dx(other))
 
     def midpoint(self, other: Point_3d) -> Point_3d:
         # Return the midpoint between this and another point

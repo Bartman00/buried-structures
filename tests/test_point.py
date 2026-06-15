@@ -2,6 +2,7 @@ from buried_structures.point import Point_3d, Origin
 import math
 import pytest
 
+
 origin = Point_3d(0, 0, 0)
 point_a = Point_3d(1, 0, 0)
 point_b = Point_3d(1, 2, 3)
@@ -89,3 +90,28 @@ def test_bad_coordinates():
     with pytest.raises(ValueError):
         point_c = Point_3d(coordinates=((0, 0, 0), (0, 0, 0)))
 
+def test_theta():
+    
+    point1 = Origin()
+    point2 = Point_3d(1, 1, 0)
+    print(point1.dx(point2))
+    print(point1.dy(point2))
+    print(f"atan2 = {math.atan2(point1.dy(point2), point1.dx(point2))}")
+    print(f"{point1.theta(point2)=}")
+    assert (point1.theta(point2) - math.pi/4) <= 1e-6
+    
+    assert(point2.theta(point1) - 1.25*math.pi) <= 1e-6
+    
+    point3 = Point_3d(1, 1, 1)
+    assert(point1.theta(point3) - math.pi/4) <= 1e-6
+    
+    point4 = Point_3d(1, 0, 1)
+    assert(point1.theta(point4) - 0 ) <= 1e-6
+    
+def test_bad_theta():
+
+    point1 = Origin()
+    point2 = Point_3d(0, 0, 1)
+
+    with pytest.raises(ValueError):
+        print(point1.theta(point2))
