@@ -15,3 +15,14 @@ def test_type():
 def test_properties():
     assert load.magnitude == 2.0
     assert load.poisson == 0.30
+    
+def test_sigma_z():
+
+    p1 = Point_3d(0, 0, 1)
+
+    unit_load = Point_Load(o, 1.0, 0.3)
+    result = unit_load.stress_z(p1)
+
+    expected = 3/(2*pi)
+
+    assert result == pytest.approx(expected)
