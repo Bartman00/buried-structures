@@ -15,6 +15,9 @@ class Point_Load(Load):
     def __init__(
         self, center: Point_3d, magnitude: float, poisson: float = 0.30
     ) -> None:
+        
+        if not (0 < poisson <= 0.5):
+            raise ValueError("Poisson needs to be: 0 < poisson <= 0.5")
 
         super().__init__(center, magnitude)
         self.poisson = poisson
