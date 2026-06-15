@@ -87,7 +87,7 @@ class Point_Load(Load):
         return 3*self.magnitude*r*z**2/(2*pi*R**5)
 
     def displacement_z(self, point:Point_3d) -> float:
-
+        return 0
 
 
 

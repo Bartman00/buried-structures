@@ -11,3 +11,7 @@ load = Point_Load(o, magnitude, poisson)
 
 def test_type():
     assert load.load_type == "Point Load"
+    
+def test_properties():
+    assert load.magnitude == 2.0
+    assert load.poisson == 0.30
