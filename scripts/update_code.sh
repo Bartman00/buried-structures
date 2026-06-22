@@ -23,8 +23,17 @@ AUTH_URL="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${GITHUB_USER}/${GIT
 # 5. Temporarily point Git to the authenticated URL
 git remote set-url origin "$AUTH_URL"
 
-# 6. Default message
-COMMIT_MSG="${1:-Automated update: $(date +'%Y-%m-%d %H:%M:%S')}"
+# 6. Get commit message from user input
+if [ "$#" -gt 0 ]; then
+    COMMIT_MSG=$1
+    echo "✅ founcd commit message"
+    # echo "$COMMIT_MSG"
+    # exit 0
+else
+    echo "❌ Error: Add a commit message"
+    exit 1
+fi
+
 
 # 7. Run the Git commands
 echo "🚀 Pushing updates to your repository..."
