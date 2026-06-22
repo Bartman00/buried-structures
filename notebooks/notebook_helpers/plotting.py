@@ -10,7 +10,32 @@ def volume_plot(x: np.ndarray, y: np.ndarray, z: np.ndarray,
                 opacity: float = 0.2, surface_count: int = 25,
                 colorscale: str = 'Turbo', title: str = '',
                 width:int = 800, height:int = 600) -> go.Figure:
+    """Creates and returns a plotly Volume Plot.
+
+    x, y, z should be created with a numpy mgrid, then flattened s.t. when
+    zipped together they represent every point in the plot.
+
+    values should be assigned using zipped x, y, z coordinages:
+    [func(Point(ix, iy, iz)) for ix, iy, iz in zip(x, y, z)]
+
+    Args:
+        x (np.ndarray): X Coordinates
+        y (np.ndarray): Y Coordinates
+        z (np.ndarray): Z Coordinates
+        values (list[float]): Values to be color coated in the plot
+        display_ratio (float, optional): How much to display, typically near 1.0. Defaults to 0.95.
+        opacity (float, optional): Opacity of plot. Defaults to 0.2.
+        surface_count (int, optional): Number of surfaces to display. Defaults to 25.
+        colorscale (str, optional): Plotly colorscale. Defaults to 'Turbo'.
+        title (str, optional): Leave blank to not include a title. Defaults to ''.
+        width (int, optional): Figure width. Defaults to 800.
+        height (int, optional): Figure height. Defaults to 600.
+
+    Returns:
+        go.Figure: Figure
+    """    
     
+    # Input asserts
     assert (0 < display_ratio <= 1.0), "Fix display_ratio s.t.: 0 < display_ratio <= 1.0"
     assert (1 <= surface_count <= 1000), "Fix surface_count s.t.: 1 <= surface_count <= 1000"
     assert (10 <= width <= 10000), "Fix width s.t.: 10 <= width <= 10000"
