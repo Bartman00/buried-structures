@@ -69,7 +69,10 @@ class Point_Load(Load):
 
         s_r, s_t = self.stress_r(point), self.stress_theta(point)
         
-        theta = self.center.theta(point)
+        # Point raises an error for coincident points in xy plane
+        # and we want radial stress only for points directly under the load
+        theta = self.center.theta(point) if self.center.dr(point) > 0 else 0
+
         return s_r*abs(cos(theta)) + s_t*(abs(sin(theta)))
 
     def stress_y(self, point: Point_3d) -> float:
@@ -77,7 +80,9 @@ class Point_Load(Load):
 
         s_r, s_t = self.stress_r(point), self.stress_theta(point)
         
-        theta = self.center.theta(point)
+        # Point raises an error for coincident points in xy plane
+        # and we want radial stress only for points directly under the load
+        theta = self.center.theta(point) if self.center.dr(point) > 0 else 0
         return s_r*abs(sin(theta)) + s_t*(abs(cos(theta)))
     
     def shear_rz(self, point: Point_3d) -> float:

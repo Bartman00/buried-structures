@@ -28,9 +28,9 @@ class Load:
     def __str__(self) -> str:
 
         return f"""
-    {self.load_type} type load:\n
-    Center:\n{self.center}\n
-    Magnitude: {self.magnitude}
+Load type: {self.load_type}\n
+Center:\n{self.center}\n
+Magnitude: {self.magnitude}
     """
 
     # Generic stress functions
