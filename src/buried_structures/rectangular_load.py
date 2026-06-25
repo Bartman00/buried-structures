@@ -58,8 +58,6 @@ class Rectangular_Load(Load):
     Width: {self.width}
     """
 
-    # def stress_xyz(self, point: Point_3d):
-    #     return False
 
     def reference(self):
         return """Elastic Solutions for Soil and Rock Mechanics, 
@@ -79,12 +77,6 @@ If stress in multiple directions are needed, it is faster use stress_xyz
 than calling stress 3 times because it can recycle many of the common terms.
     """
 
-    def markdown(self):
-        return """
-    # Parent Load
-
-    Includes hard coded stresses and displacements.
-    """
 
     # Unique stress functions
     def stress_x(self, point: Point_3d) -> float:
@@ -171,15 +163,6 @@ than calling stress 3 times because it can recycle many of the common terms.
         else:
             raise ValueError("Missing case in rectangular_load.stress_corner")
 
-    # Uniqe displacement functions
-    def displacement_x(self, point: Point_3d) -> float:
-        raise NotImplementedError ("Not defined in Poulos & Davis")
-
-    def displacement_y(self, point: Point_3d) -> float:
-        raise NotImplementedError ("Not defined in Poulos & Davis")
-
-    def displacement_z(self, point: Point_3d) -> float:
-        raise NotImplementedError ("Not defined in Poulos & Davis")
 
     def within(self, p: Point_3d) -> bool:
         # Return if a point is within the x-y bounds
@@ -305,6 +288,15 @@ than calling stress 3 times because it can recycle many of the common terms.
 
             return ret
 
+    # Uniqe displacement functions
+    def displacement_x(self, point: Point_3d) -> float:
+        raise NotImplementedError ("Displacement not defined in Poulos & Davis for rectangular load")
+
+    def displacement_y(self, point: Point_3d) -> float:
+        raise NotImplementedError ("Displacement not defined in Poulos & Davis for rectangular load")
+
+    def displacement_z(self, point: Point_3d) -> float:
+        raise NotImplementedError ("Displacement not defined in Poulos & Davis for rectangular load")
 
 if __name__ == "__main__":
     print("Inside rectangular_load.py")

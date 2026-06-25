@@ -6,7 +6,7 @@ Because this is being done as a personal project, I want to write out a goal bec
 
 - Try to spend 20-40 hours on this project.
 - [x] Use a programming language you're already familiar with.
-- Commit your code to Git often, and push it up to GitHub.
+- [x] Commit your code to Git often, and push it up to GitHub.
 - Create a README.md file for your project. It should explain to readers:
 - What the project is, and what it does.
 - How to clone and run it.
@@ -48,14 +48,14 @@ So what would I actually consider successful enough to submit as my boot.dev pro
 
 Not sure if I want to include the ad-hoc method. It is useful, but I think I'll be well above the 20 hour minimum listed in the spec of the personal project.
 
-I want to have looked implimented:
+I want to have implimented:
 
 1. [x] Rectangular load
-2. Point load
-3. Strip Load
+2. [x] Point load
+3. [x] Strip Load
 4. Adding loads together
 5. Notebook for rectangular load
-6. Notebook for point load
+6. [x] Notebook for point load
 7. Notebook for strip load
 8. Notebook for adding loads together
 9. Answer some questions (listed below)
@@ -67,6 +67,7 @@ I want to have looked implimented:
 2. Include multiple lanes with an input for minimum adjacent wheel spacing.
 3. Create a notebook exploring the ad-hoc method that I could send to the CANDE developer.
 4. Include a function to account for pavement thickensses.
+5. Add stress along a horizontal direction to loads method using x & y stresses and an xy vector.
 
 ### Questions for the Elastic methods:
 
@@ -88,6 +89,7 @@ I want to have looked implimented:
 4. How big of a role does Poisson's ratio play?
 5. Cerutti - concentrated horizontal load
 6. Stip horizontal loading
+7. What affect does skew have? Typically axles can only be so close together, would this have a large affect on pressure applied to a retaining wall?
 
 ### FEM Results Questions:
     
