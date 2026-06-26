@@ -6,11 +6,18 @@ from buried_structures import Point_3d
 
 class Load:
     load_type = "Parent"
+    
+    down_strings = ("+z", "-z")
 
-    def __init__(self, center: Point_3d, magnitude: float) -> None:
+    def __init__(self, center: Point_3d, magnitude: float, down: str = "+z") -> None:
 
         self.center = center
         self.magnitude = magnitude
+        
+        if down not in self.down_strings:
+            raise ValueError(f"down needs to be in {self.down_strings}")
+            
+        self.down = down
 
     def __eq__(self, other: object) -> bool:
 
@@ -32,7 +39,16 @@ Load type: {self.load_type}\n
 Center:\n{self.center}\n
 Magnitude: {self.magnitude}
     """
+    
+    def downward_z(self, point: Point_3d, check_below: bool = True) -> float:
+        # Returns downward distance. run a check that a point is below
+        # the load definition center unless turned off
+        ret = self.center.dz(point, reverse=(self.down != "-z"))
 
+        if (ret < 0) and check_below:
+            raise ValueError(f"Calculation point: {point.coordinates_string()}, is above load point: {self.center.coordinates_string()}")
+        return ret
+        
     # Unique stress functions
     def stress_x(self, point: Point_3d) -> float:
         return point.x()

@@ -19,42 +19,25 @@ def test_magnitude():
     assert load_a.magnitude == 1
     
 def test_stress_x():
-
-    assert load_a.stress(point_a, direction="x") == 1
-    assert load_a.stress(point_a, direction="y") == 2
-    assert load_a.stress(point_a, direction="z") == 3
-    
-def test_displacement():
-
-    assert load_a.displacement(point_a, "x") == -1
-    assert load_a.displacement(point_a, "y") == -2
-    assert load_a.displacement(point_a, "z") == -3
+    assert load_a.stress_x(point_a) == point_a.x()
+def test_stress_y():
+    assert load_a.stress_y(point_a) == point_a.y()
+def test_stress_z():
+    assert load_a.stress_z(point_a) == point_a.z()
     
 def test_not_implimented():
     
     with pytest.raises(NotImplementedError):
-        print(load_a.stress(point_a, direction="r"))
-        
+        print(load_a.shear_xy(point_a))
     with pytest.raises(NotImplementedError):
-        print(load_a.displacement(point_a, direction="?"))
+        print(load_a.shear_yz(point_a))
     with pytest.raises(NotImplementedError):
-        print(load_a.displacement(point_a, direction=""))
+        print(load_a.shear_xz(point_a))
+    with pytest.raises(NotImplementedError):
+        print(load_a.displacement_x(point_a))
+    with pytest.raises(NotImplementedError):
+        print(load_a.displacement_y(point_a))
+    with pytest.raises(NotImplementedError):
+        print(load_a.displacement_z(point_a))
         
-def test_reference():
-
-    assert load_a.reference() == "No reference, made up load"
-
-def test_description():
-
-    assert load_a.description() == """
-    Parent load that just has hard coded loads and
-    displacements.
-    """
-def test_markdown():
-
-    assert load_a.markdown() == """
-    # Parent Load
-
-    Includes hard coded stresses and displacements.
-    """
-
+        

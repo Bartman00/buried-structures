@@ -143,6 +143,9 @@ class Point_3d:
         
         return Point_3d(new_x, new_y, new_z)
         
+    def coordinates_string(self) -> str:
+        # Compact (x, y, z) string
+        return f"({self.x():.2f},{self.y():.2f},{self.z():.2f})"
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Point_3d):

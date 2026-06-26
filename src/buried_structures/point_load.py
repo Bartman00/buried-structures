@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from math import pi, sin, cos
+from math import cos, pi, sin
 
 from buried_structures.load import Load
 from buried_structures.point import Point_3d
@@ -13,13 +13,17 @@ class Point_Load(Load):
     load_type = "Point Load"
 
     def __init__(
-        self, center: Point_3d, magnitude: float, poisson: float = 0.30
+        self,
+        center: Point_3d,
+        magnitude: float,
+        poisson: float = 0.30,
+        down: str = "+z",
     ) -> None:
-        
+
         if not (0 < poisson <= 0.5):
             raise ValueError("Poisson needs to be: 0 < poisson <= 0.5")
 
-        super().__init__(center, magnitude)
+        super().__init__(center, magnitude, down)
         self.poisson = poisson
 
     def __eq__(self, other: object) -> bool:
@@ -32,14 +36,14 @@ class Point_Load(Load):
 
         # Only has same properties as parent
         return True
-        
-    def point_geometry(self, point:Point_3d) -> tuple[float, float, float]:
-        
+
+    def point_geometry(self, point: Point_3d) -> tuple[float, float, float]:
+
         # Return the distance, horizontal plane distance and z
         # of another point. Used in several functions below
         R = self.center.distance(point)
         r = self.center.dr(point)
-        z = self.center.dz(point, absolute=True)
+        z = self.downward_z(point)
         return R, r, z
 
     def stress_z(self, point: Point_3d) -> float:
@@ -55,36 +59,41 @@ class Point_Load(Load):
             / (2 * pi * R**2)
             * (-3 * r**2 * z / R**3 + (1 - 2 * self.poisson) * R / (R + z))
         )
-        
+
     def stress_theta(self, point: Point_3d) -> float:
         # Tangential stress
 
         R = self.center.distance(point)
         z = point.z()
-        
-        return -(1-2*self.poisson)*self.magnitude/(2*pi*R**2)*(z/R - R/(R+z))
+
+        return (
+            -(1 - 2 * self.poisson)
+            * self.magnitude
+            / (2 * pi * R**2)
+            * (z / R - R / (R + z))
+        )
 
     def stress_x(self, point: Point_3d) -> float:
         # X direction stress
 
         s_r, s_t = self.stress_r(point), self.stress_theta(point)
-        
+
         # Point raises an error for coincident points in xy plane
         # and we want radial stress only for points directly under the load
         theta = self.center.theta(point) if self.center.dr(point) > 0 else 0
 
-        return s_r*abs(cos(theta)) + s_t*(abs(sin(theta)))
+        return s_r * abs(cos(theta)) + s_t * (abs(sin(theta)))
 
     def stress_y(self, point: Point_3d) -> float:
         # Y direction stress
 
         s_r, s_t = self.stress_r(point), self.stress_theta(point)
-        
+
         # Point raises an error for coincident points in xy plane
         # and we want radial stress only for points directly under the load
         theta = self.center.theta(point) if self.center.dr(point) > 0 else 0
-        return s_r*abs(sin(theta)) + s_t*(abs(cos(theta)))
-    
+        return s_r * abs(sin(theta)) + s_t * (abs(cos(theta)))
+
     def shear_rz(self, point: Point_3d) -> float:
         # Shear stress in the r-z plane
 
@@ -92,9 +101,7 @@ class Point_Load(Load):
         R = self.center.distance(point)
         z = point.z()
 
-        return 3*self.magnitude*r*z**2/(2*pi*R**5)
-
-
+        return 3 * self.magnitude * r * z**2 / (2 * pi * R**5)
 
 
 if __name__ == "__main__":

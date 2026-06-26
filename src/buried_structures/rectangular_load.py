@@ -15,7 +15,11 @@ class Rectangular_Load(Load):
     load_type = "Rectangular Load"
 
     def __init__(
-        self, center: Point_3d, magnitude: float, length: float, width: float
+            self, center: Point_3d, 
+            magnitude: float, 
+            length: float, 
+            width: float, 
+            down: str = "+z"
     ) -> None:
 
         if length < 0:
@@ -23,7 +27,7 @@ class Rectangular_Load(Load):
         if width < 0:
             raise ValueError("Rectangular Load cannot have a negative width")
 
-        super().__init__(center, magnitude)
+        super().__init__(center, magnitude, down)
         self.length = length
         self.width = width
         self.center = center
@@ -221,7 +225,8 @@ than calling stress 3 times because it can recycle many of the common terms.
                 center_point, self.magnitude, length, width
             )
 
-            ret += getattr(sub_rectangle, corner_function)(point.z(), direction)
+            corner_z = self.downward_z(point)
+            ret += getattr(sub_rectangle, corner_function)(corner_z, direction)
         return ret
 
     def exterior_superposition(
