@@ -8,7 +8,7 @@
 
 ### Parent loads:
 
-- [ ] Clean up type hints.
+- [x] Clean up type hints.
 
 ### Rectangular loads:
 
@@ -16,34 +16,34 @@
 
 - [ ] Displacements
 - [ ] Markdown, reference, description.
-- [ ] Better z != 0 handling. Want to be able to get results from points below the center point.
+- [x] Better z != 0 handling. Want to be able to get results from points below the center point.
 
 #### Testing: 
 
-- [ ] Test internal stresses
-- [ ] Test external stresses
-- [ ] Test error handling
+- [x] Test internal stresses
+- [x] Test external stresses
+- [x] Test error handling
 
 #### Notebooks:
 
-- [ ] Cool graphs / general demo
-- [ ] Verify atan2 hasn't broken it
+- [x] Cool graphs / general demo
+- [x] Verify atan2 hasn't broken it
 - [ ] How does AASHTO commentary wheel areas compare
 
 ### Point load
 
 #### Developing:
 
-- [ ] Base class
-- [ ] Handle cylindrical coordinates correctly
+- [x] Base class
+- [x] Handle cylindrical coordinates correctly
 
 #### Testing:
 
 #### Notebooks:
 
-- [ ] Cylindrical to cartesian coordinates
+- [x] Cylindrical to cartesian coordinates
 - [ ] Comparison of point load to rectangular with same loading
-- [ ] General cool graphs / general demo
+- [x] General cool graphs / general demo
 - [ ] Can you approximate rectangular loads as a set of point loads?
 
 ### Strip loads

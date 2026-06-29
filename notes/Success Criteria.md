@@ -59,6 +59,7 @@ I want to have implimented:
 7. Notebook for adding loads together
 8. Answer some questions (listed below)
 9. Make this pip-installable.
+10. Make the README.md
 
 ### Ignore for boot.dev:
 
@@ -71,7 +72,7 @@ I want to have implimented:
 
 ### Questions for the Elastic methods:
 
-1. How should the singularity be addressed in the point load application?
+1. [x] How should the singularity be addressed in the point load application?
 2. How much of a difference does the rectangular distribution even make?
 3. [x] How should the radial stress be addressed for the point load?
 
