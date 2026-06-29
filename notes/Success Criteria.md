@@ -77,8 +77,8 @@ I want to have implimented:
 
 #### Ignored for boot.dev project
 
-1. (Ignore for boot.dev)How much of a difference is there between the rectangular and strip methods?
-2. (Ignore for boot.dev)Could you approximate the rectangular method with a grid of point methods? The rectangular method conservatively (for most applications) assumes a poisson's ratio of 0.50 so a grid of point loads would be useful for more realistic poisson's ratios.
+1. How much of a difference is there between the rectangular and strip methods?
+2. Could you approximate the rectangular method with a grid of point methods? The rectangular method conservatively (for most applications) assumes a poisson's ratio of 0.50 so a grid of point loads would be useful for more realistic poisson's ratios.
 
 ### Questions for the Ad-hoc method (Ignore for boot.dev):
 
