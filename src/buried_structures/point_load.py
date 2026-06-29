@@ -20,6 +20,7 @@ class Point_Load(Load):
         down: str = "+z",
     ) -> None:
 
+        # Theoretical limits on poisson ratio
         if not (0 < poisson <= 0.5):
             raise ValueError("Poisson needs to be: 0 < poisson <= 0.5")
 
@@ -82,6 +83,9 @@ class Point_Load(Load):
         # and we want radial stress only for points directly under the load
         theta = self.center.theta(point) if self.center.dr(point) > 0 else 0
 
+
+        # print(f"theta={theta}")
+        # print(f"{s_r=},\n{s_t=}")
         return s_r * abs(cos(theta)) + s_t * (abs(sin(theta)))
 
     def stress_y(self, point: Point_3d) -> float:
@@ -109,6 +113,11 @@ if __name__ == "__main__":
 
     p = Point_3d(0, 0, 0)
     magnitude = 1
-    point_laod = Point_Load(p, magnitude)
+    poisson = 0.50
+    point_load = Point_Load(p, magnitude, poisson)
 
-    print(point_laod)
+    point = Point_3d(1, 30, 30)
+    stress_x = point_load.stress_x(point)
+
+    print(stress_x)
+

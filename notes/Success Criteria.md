@@ -54,12 +54,11 @@ I want to have implimented:
 2. [x] Point load
 3. [x] Strip Load
 4. Adding loads together
-5. Notebook for rectangular load
+5. [x] Notebook for rectangular load
 6. [x] Notebook for point load
-7. Notebook for strip load
-8. Notebook for adding loads together
-9. Answer some questions (listed below)
-10. Make this pip-installable.
+7. Notebook for adding loads together
+8. Answer some questions (listed below)
+9. Make this pip-installable.
 
 ### Ignore for boot.dev:
 
@@ -68,14 +67,18 @@ I want to have implimented:
 3. Create a notebook exploring the ad-hoc method that I could send to the CANDE developer.
 4. Include a function to account for pavement thickensses.
 5. Add stress along a horizontal direction to loads method using x & y stresses and an xy vector.
+6. Notebook for strip load
 
 ### Questions for the Elastic methods:
 
 1. How should the singularity be addressed in the point load application?
 2. How much of a difference does the rectangular distribution even make?
-3. (Ignore for boot.dev)How much of a difference is there between the rectangular and strip methods?
-4. (Ignore for boot.dev)Could you approximate the rectangular method with a grid of point methods? The rectangular method conservatively (for most applications) assumes a poisson's ratio of 0.50 so a grid of point loads would be useful for more realistic poisson's ratios.
-5. [x] How should the radial stress be addressed for the point load?
+3. [x] How should the radial stress be addressed for the point load?
+
+#### Ignored for boot.dev project
+
+1. (Ignore for boot.dev)How much of a difference is there between the rectangular and strip methods?
+2. (Ignore for boot.dev)Could you approximate the rectangular method with a grid of point methods? The rectangular method conservatively (for most applications) assumes a poisson's ratio of 0.50 so a grid of point loads would be useful for more realistic poisson's ratios.
 
 ### Questions for the Ad-hoc method (Ignore for boot.dev):
 
