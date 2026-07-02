@@ -36,8 +36,8 @@ class Rectangular_Load(Load):
         self.corner_points = [
             Point_3d(self.xrange[0], self.yrange[0]),
             Point_3d(self.xrange[0], self.yrange[1]),
-            Point_3d(self.xrange[1], self.yrange[0]),
             Point_3d(self.xrange[1], self.yrange[1]),
+            Point_3d(self.xrange[1], self.yrange[0]),
         ]
 
     def __eq__(self, other: object) -> bool:
@@ -272,11 +272,11 @@ than calling stress 3 times because it can recycle many of the common terms.
                 if point.y() > self.center.y():
                     # Point is above (point.y > center.y)
                     # Add bottom 2, subtract top 2 sub-rectangle affects
-                    flippers = [1, -1, 1, -1]
+                    flippers = [1, -1, -1, 1]
                 else:
                     # Point is below
                     # Add top 2, subtract bottom 2 sub-rectangle affects
-                    flippers = [-1, 1, -1, 1]
+                    flippers = [-1, 1, 1, -1]
             else:
                 if point.x() > self.center.x():
                     # Point is to right (point.x > center.x)
