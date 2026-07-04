@@ -57,7 +57,7 @@ I want to have implimented:
 5. [x] Notebook for rectangular load
 6. [x] Notebook for point load
 7. Notebook for adding loads together
-8. Answer some questions (listed below)
+8. [x] Answer some questions (listed below)
 9. Make this pip-installable.
 10. Make the README.md
 
@@ -73,7 +73,7 @@ I want to have implimented:
 ### Questions for the Elastic methods:
 
 1. [x] How should the singularity be addressed in the point load application?
-2. How much of a difference does the rectangular distribution even make?
+2. [x] How much of a difference does the rectangular distribution even make?
 3. [x] How should the radial stress be addressed for the point load?
 
 #### Ignored for boot.dev project
