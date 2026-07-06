@@ -80,6 +80,10 @@ extend the results beyond the corners.
 If stress in multiple directions are needed, it is faster use stress_xyz
 than calling stress 3 times because it can recycle many of the common terms.
     """
+    
+    def load(self) -> float:
+        # Returns the total load
+        return self.magnitude * self.length * self.width
 
 
     # Unique stress functions

@@ -53,13 +53,14 @@ I want to have implimented:
 1. [x] Rectangular load
 2. [x] Point load
 3. [x] Strip Load
-4. Adding loads together
+4. [x] Adding loads together
 5. [x] Notebook for rectangular load
 6. [x] Notebook for point load
 7. Notebook for adding loads together
 8. [x] Answer some questions (listed below)
 9. Make this pip-installable.
 10. Make the README.md
+11. Add rectangular load approximation with concentrated loads
 
 ### Ignore for boot.dev:
 

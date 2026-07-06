@@ -9,6 +9,9 @@ class Add_Load(Load):
     
     def __init__(self, loads: list[Load]):
         
+        if len(loads) > 1:
+            for load in loads[1:]:
+                assert (load.down == loads[0].down), "All loads need to have the same 'down' for an Add_Load"
         self.loads = loads
         
     def sum_effect(self, f: str, point: Point_3d)-> float:
