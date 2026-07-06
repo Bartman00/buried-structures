@@ -3,7 +3,7 @@ from math import atan2, pi, sqrt, cos, sin
 from buried_structures.point import Origin, Point_3d
 from buried_structures.add_load import Add_Load
 from buried_structures.point_load import Point_Load
-from buried_structures.point_load import Rectangular_Load
+from buried_structures.rectangular_load import Rectangular_Load
 import pytest
 
 magnitude = 14.0
@@ -66,17 +66,27 @@ def test_double():
     
 def test_rect():
 
+    expected = (load.stress_x(point) +
+                rectangular_load.stress_x(point) +
+                rectangular_load_2.stress_x(point)
+              )
     result = multi_add.stress_x(point)
-    expected = multi_add.stress_x(point)
     assert result == expected
     
+    expected = (load.stress_y(point) +
+                rectangular_load.stress_y(point) +
+                rectangular_load_2.stress_y(point)
+              )
     result = multi_add.stress_y(point)
-    expected = multi_add.stress_y(point)
     assert result == expected
     
+    expected = (load.stress_z(point) +
+                rectangular_load.stress_z(point) +
+                rectangular_load_2.stress_z(point)
+              )
     result = multi_add.stress_z(point)
-    expected = multi_add.stress_z(point)
     assert result == expected
+    
 def test_fails():
 
     with pytest.raises(ValueError):
