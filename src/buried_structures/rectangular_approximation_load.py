@@ -14,6 +14,7 @@ class Rectangular_Approximation(Add_Load):
                  x_n_points: int, y_n_points: int,
                  poisson: float = 0.30):
         
+        
         self.rectangular_load = rectangular_load
         
         self.x_n_points, self.y_n_points = x_n_points, y_n_points

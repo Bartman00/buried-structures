@@ -1,3 +1,6 @@
+"""
+Add's multiple loads together and returns sum of effects
+"""
 from __future__ import annotations
 
 from buried_structures import Point_3d
